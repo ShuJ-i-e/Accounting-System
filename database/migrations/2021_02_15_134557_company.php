@@ -16,8 +16,10 @@ class Company extends Migration
         Schema::create('company', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->text('name');
-            $table->decimal('total', 8, 2);
+            $table->text('companyName');
+            $table->text('companyAddress');
+            $table->text('companyPhone');
+            $table->decimal('total', 8, 2)->default('0.00');
         });
     }
 
