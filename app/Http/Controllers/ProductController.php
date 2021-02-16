@@ -14,13 +14,9 @@ class ProductController extends Controller
      */
     public function index()
     {
-        // $products = Product::latest()->get();
-
-        // return view('product')->with('products', $products);
-
         $products = Product::latest()->paginate(5);
     
-        return view('product.productView',compact('products'))
+        return view('product.list',compact('products'))
             ->with('i', (request()->input('page', 1) - 1) * 5);
     }
 
@@ -31,7 +27,7 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return view('product.productAdd');
+        return view('product.create');
     }
 
     /**
@@ -58,9 +54,10 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Product $product)
     {
-        //
+        $resource = Product::find($product)->first();
+        return view('product.show')->with('resource', $resource);
     }
 
     /**
@@ -69,10 +66,10 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Product $product)
     {
         $resource = Product::find($product)->first();
-        return view('product')->with('resource', $resource);
+        return view('product.create')->with('resource', $resource);
     }
 
     /**
@@ -82,7 +79,7 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Product $product)
     {
         $request->validate([
             'prodName' => 'required',
@@ -100,7 +97,7 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Product $product)
     {
         $product->delete();
         return redirect()->action([ProductController::class, 'index'])

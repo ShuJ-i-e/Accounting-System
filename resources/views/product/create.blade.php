@@ -28,7 +28,7 @@
             <!-- /.card-footer -->
             <div class="card-footer">
                 <button type="submit"
-                    class="btn btn-primary">{{ isset($resource) ? 'Add New Product' : 'Insert New Product' }}</button>
+                    class="btn btn-primary">{{ isset($resource) ? 'Update Product' : 'Insert New Product' }}</button>
             </div>
         </form>
 </div>
