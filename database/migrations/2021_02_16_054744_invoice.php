@@ -16,7 +16,8 @@ class Invoice extends Migration
         Schema::create('invoice', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->text('companyId');
+            $table->foreignId('companyId');
+            $table->foreign('companyId')->references('id')->on('company')->onDelete('cascade')->onUpdate('cascade');
             $table->decimal('invTotal', 8, 2);
         });
     }
