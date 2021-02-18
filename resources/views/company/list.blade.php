@@ -27,6 +27,7 @@
             <th scope="col">Actions</th>
         </tr>
     </thead>
+    <tbody>
     @foreach ($companies as $company)
     <tr>
         <td>{{ $company->id }}</td>
@@ -47,6 +48,12 @@
         </td>
     </tr>
     @endforeach
+    </tbody>
+    <tfoot>
+        <div class="d-flex justify-content-center">
+            {!! $companies->render("pagination::bootstrap-4") !!}
+        </div>
+    </tfoot>
 </table>
 
 
