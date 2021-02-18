@@ -24,6 +24,7 @@ class Order extends Migration
             $table->decimal('Mweight', 8, 2);
             $table->decimal('price', 8, 2);
             $table->decimal('total', 8, 2);
+            $table->text('remarks');
         });
     }
 
