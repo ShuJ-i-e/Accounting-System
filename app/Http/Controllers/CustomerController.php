@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use DB;
 use App\Models\Company;
 use App\Models\Product;
 use App\Models\Invoice;
@@ -16,8 +17,12 @@ class CustomerController extends Controller
      */
     public function index()
     {
-        $invoices = Invoice::latest()->paginate(5);
-    
+        
+        $invoices = DB::table('invoice')
+       ->join('company', 'company.id', '=', 'invoice.companyId')
+       ->select('invoice.id', 'company.companyName', 'invoice.invTotal')
+       ->paginate(10);
+        
         return view('customer.list',compact('invoices'))
             ->with('i', (request()->input('page', 1) - 1) * 5);
     }
