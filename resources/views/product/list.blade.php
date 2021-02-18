@@ -27,6 +27,7 @@
             <th scope="col">Actions</th>
         </tr>
     </thead>
+    <tbody>
     @foreach ($products as $product)
     <tr>
         <td>{{ $product->id }}</td>
@@ -47,7 +48,12 @@
         </td>
     </tr>
     @endforeach
+    </tbody>
+    <tfoot>
+        <div class="d-flex justify-content-center">
+            {!! $products->render("pagination::bootstrap-4") !!}
+        </div>
+    </tfoot>
 </table>
-
 
 @endsection
