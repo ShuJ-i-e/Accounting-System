@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use PDF;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -12,10 +12,18 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $products = Product::paginate(10);
     
+        if ($request->has('export')) 
+        {
+             if ($request->get('export') == 'pdf') {
+                 $pdf = PDF::loadView('product.pdfView', compact('products'));
+                 return $pdf->download('products.pdf');
+             }
+        }
+ 
         return view('product.list',compact('products'))
             ->with('i', (request()->input('page', 1) - 1) * 5);
     }
