@@ -11,8 +11,11 @@
             <p>{{ $message }}</p>
         </div>
         @endif
-        <div class="pull-right">
+        <div class="float-left">
             <a class="btn btn-success" href="/product/create"> Create New Product</a>
+        </div>
+        <div class="float-right">
+            <a class="btn btn-success" href="/product?export=pdf"> Download Product List</a>
         </div>
     </div>
 </div>
