@@ -23,7 +23,7 @@
         <tr>
             <th scope="col">Company ID</th>
             <th scope="col">Company Name</th>
-            <th scope="col">Company Phone</th>
+            <th scope="col">Total (RM)</th>
             <th scope="col">Actions</th>
         </tr>
     </thead>
@@ -32,7 +32,7 @@
     <tr>
         <td>{{ $company->id }}</td>
         <td>{{ $company->companyName }}</td>
-        <td>{{ $company->companyPhone }}</td>
+        <td>{{ $company->total }}</td>
         <td>
             <form action="{{ route('company.destroy',$company->id) }}" method="POST">
                 @csrf
