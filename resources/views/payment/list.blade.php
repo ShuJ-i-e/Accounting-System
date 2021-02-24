@@ -4,7 +4,7 @@
 <div class="row">
     <div class="col-lg-12 margin-tb">
         <div class="pull-left">
-            <h2>Invoices</h2>
+            <h2>Customer Payment History</h2>
         </div>
         @if ($message = Session::get('success'))
         <div class="alert alert-success">
@@ -12,7 +12,7 @@
         </div>
         @endif
         <div class="pull-right">
-            <a class="btn btn-success" href="/payment/create"> Create New Invoice</a>
+            <a class="btn btn-success" href="/payment/create"> Create New Payment</a>
         </div>
     </div>
 </div>
