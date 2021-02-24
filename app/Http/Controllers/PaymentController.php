@@ -15,7 +15,13 @@ class PaymentController extends Controller
      */
     public function index()
     {
-        //
+        $payments = DB::table('payment')
+        ->join('company', 'company.id', '=', 'payment.companyId')
+        ->select('payment.id', 'company.companyName', 'payment.payment')
+        ->paginate(10);
+         
+        return view('payment.list',compact('payments'))
+            ->with('i', (request()->input('page', 1) - 1) * 5);
     }
 
     public function setCompanyId(Request $request)
@@ -53,14 +59,10 @@ class PaymentController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'payment' => 'required',
-        ]);
-        Payment::create($request->all());
-
-        $resource = DB::table('company')
-        ->where('id', '=', $request->id)
-        ->value('total');
+        $payment = new Payment;
+        $payment->companyId = $request->companyId;
+        $payment->payment = $request->payment;
+        $payment->save();
         
         $company = Company::find($request->companyId);
         $company->total = $request->finalTotal;
