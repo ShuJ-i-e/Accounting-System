@@ -65,12 +65,12 @@
                 <div class="sidebar-menu">
                     <ul>
                         <li class="header-menu">
-                            <span>General</span>
+                            <span>Customer</span>
                         </li>
                         <li class="sidebar-dropdown">
                             <a href="#">
                                 <i class="fa fa-tachometer-alt"></i>
-                                <span>Customer</span> </a>
+                                <span>Invoice</span> </a>
                             <div class="sidebar-submenu">
                                 <ul>
                                     <li>
@@ -85,11 +85,11 @@
                         <li class="sidebar-dropdown">
                             <a href="#">
                                 <i class="fa fa-tachometer-alt"></i>
-                                <span>Payment - Customer</span> </a>
+                                <span>Payment</span> </a>
                             <div class="sidebar-submenu">
                                 <ul>
                                     <li>
-                                        <a href="/payment">View Paymet History</a>
+                                        <a href="/payment">View Payment History</a>
                                     </li>
                                     <li>
                                         <a href="/payment/create">Create Payment</a>
@@ -97,6 +97,43 @@
                                 </ul>
                             </div>
                         </li>
+                        <li class="header-menu">
+                            <span>Vendor</span>
+                        </li>
+                        <li class="sidebar-dropdown">
+                            <a href="#">
+                                <i class="fa fa-tachometer-alt"></i>
+                                <span>Invoice</span> </a>
+                            <div class="sidebar-submenu">
+                                <ul>
+                                    <li>
+                                        <a href="/vendor">View Invoice</a>
+                                    </li>
+                                    <li>
+                                        <a href="/vendor/create">Create Invoice</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="sidebar-dropdown">
+                            <a href="#">
+                                <i class="fa fa-tachometer-alt"></i>
+                                <span>Payment</span> </a>
+                            <div class="sidebar-submenu">
+                                <ul>
+                                    <li>
+                                        <a href="/payment">View Payment History</a>
+                                    </li>
+                                    <li>
+                                        <a href="/payment/create">Create Payment</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="header-menu">
+                            <span>General</span>
+                        </li>
+
                         <li class="sidebar-dropdown">
                             <a href="#">
                                 <i class="fa fa-tachometer-alt"></i>
@@ -133,23 +170,6 @@
                     <!-- sidebar-menu  -->
                 </div>
                 <!-- sidebar-content  -->
-                <div class="sidebar-footer">
-                    <a href="#">
-                        <i class="fa fa-bell"></i>
-                        <span class="badge badge-pill badge-warning notification">3</span>
-                    </a>
-                    <a href="#">
-                        <i class="fa fa-envelope"></i>
-                        <span class="badge badge-pill badge-success notification">7</span>
-                    </a>
-                    <a href="#">
-                        <i class="fa fa-cog"></i>
-                        <span class="badge-sonar"></span>
-                    </a>
-                    <a href="#">
-                        <i class="fa fa-power-off"></i>
-                    </a>
-                </div>
         </nav>
         <!-- sidebar-wrapper  -->
 
