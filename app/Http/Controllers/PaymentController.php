@@ -28,7 +28,7 @@ class PaymentController extends Controller
     {
         $resource = DB::table('company')
         ->where('id', '=', $request->id)
-        ->value('total');
+        ->value('companyDebt');
         return response()->json(['success'=>'Data is successfully added', 'resource'=> $resource]);
     }
     /**
@@ -65,7 +65,7 @@ class PaymentController extends Controller
         $payment->save();
         
         $company = Company::find($request->companyId);
-        $company->total = $request->finalTotal;
+        $company->companyDebt = $request->finalTotal;
         $company->save();
         return redirect()->action([PaymentController::class, 'index'])
                         ->with('success','Payment created successfully.');
