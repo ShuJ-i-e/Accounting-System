@@ -22,3 +22,4 @@ Route::resource('company', CompanyController::class);
 Route::resource('customer', CustomerController::class);
 Route::resource('payment', PaymentController::class);
 Route::post('/payment/{companyId}', 'PaymentController@setCompanyId');
+Route::resource('vendor', VendorController::class);
