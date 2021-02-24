@@ -14,19 +14,24 @@ $(document).ready(function() {
                 method: 'post',
                 data: {
                     _token: '{{csrf_token()}}',
-                    id: $("#company option:selected").val(),
+                    id: companyId,
                 },
                 success: function(result) {
                     console.log(result);
                     $("#company").attr('disabled', 'disabled');
-                    $('#backBtn').show();
-                    $('#nextBtn').html("Proceed to Payment");
+                    $('#backDiv').show();
+                    $('#paymentDiv').show();
+                    $('#nextBtn').hide();
                     let total = result.resource
                     if (!document.getElementById('totalDiv')) {
                         $(".card-body").append(`
                         <div id="totalDiv">
-                        <h3>RM: <label id="total">` + total + `</label><h3>
-                        </div>`);
+                        <h3>Due(RM): <label id="total">` + total + `</label></h3>
+                        <h3>Pay (RM):</h3>
+                        <input type="text" class="form-control" id="payment" name="payment"/>
+                        <span class="error invalid-feedback" id="paymentError">Payment field is required.</span>
+                        </div>`
+                        );
                     } else {
                         $('#total').text(total);
                     }
@@ -38,13 +43,39 @@ $(document).ready(function() {
         }
     });
 
-    $('select').click(function() {
+    $('#company').click(function() {
         $('#companyError').hide();
     });
 
     $('#backBtn').click(function() {
         $("#company").removeAttr('disabled');
         $('#totalDiv').remove();
+        $('#paymentDiv').hide();
+        $('#nextBtn').show();
+
+    });
+
+    $('#form').submit(function(event) {
+        event.preventDefault();
+        if( $('#payment').val().length === 0 )
+        {
+            $('#paymentError').show().delay(3000).fadeOut();
+        }
+        else
+        {
+            var finalTotal = $('#total').text() - $('#payment').val();
+            $.ajax({
+                url: "/payment",
+                method: 'post',
+                data: {
+                    _token: '{{csrf_token()}}',
+                    companyId: $("#company option:selected").val(),
+                    payment: $("#payment").val(),
+                    finalTotal: finalTotal,
+                }
+            });
+
+        }
     });
 
 });
@@ -53,16 +84,12 @@ $(document).ready(function() {
 
 @section('content')
 <!-- form content -->
-<form method="POST">
+<form method="POST" name="form" id="form" action="{{route('payment.store')}}" enctype="multipart/form-data">
+@csrf
     <div class="card">
         <!-- /.card-header -->
         <div class="card-header">
             <h3>Create New Payment</h3>
-            <div class="progress">
-                <div class="progress-bar" role="progressbar" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"
-                    style="width:30%">
-                </div>
-            </div>
         </div>
         <!-- /.card-body -->
         <div class="card-body">
@@ -83,8 +110,12 @@ $(document).ready(function() {
             <div class="float-right">
                 <a class="btn btn-primary" id="nextBtn">NEXT</a>
             </div>
-            <div class="float-left">
-                <a class="btn btn-primary" id="backBtn" style="display:none">BACK</a>
+            <div class="float-right" style="display:none" id="paymentDiv">
+
+            <button type="submit" class="btn btn-primary" id="paymentBtn">Proceed To Payment</button>
+                    </div>
+            <div class="float-left" style="display:none" id="backDiv">
+                <a class="btn btn-primary" id="backBtn" >BACK</a>
             </div>
         </div>
 
