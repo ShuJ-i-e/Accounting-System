@@ -24,7 +24,6 @@ class PaymentController extends Controller
         ->where('id', '=', $request->id)
         ->value('total');
         return response()->json(['success'=>'Data is successfully added', 'resource'=> $resource]);
-        // return view('payment.create', compact('resource'));
     }
     /**
      * Show the form for creating a new resource.
@@ -54,7 +53,20 @@ class PaymentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'payment' => 'required',
+        ]);
+        Payment::create($request->all());
+
+        $resource = DB::table('company')
+        ->where('id', '=', $request->id)
+        ->value('total');
+        
+        $company = Company::find($request->companyId);
+        $company->total = $request->finalTotal;
+        $company->save();
+        return redirect()->action([PaymentController::class, 'index'])
+                        ->with('success','Payment created successfully.');
     }
 
     /**
