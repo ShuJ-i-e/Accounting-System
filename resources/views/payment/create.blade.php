@@ -3,7 +3,8 @@
 @section('js')
 <script>
 $(document).ready(function() {
-
+    var invoice_length=0;
+    var invoice;
     $('#nextBtn').click(function() {
         var companyId = $("#company option:selected").val();
         if ($('#option1').is(':selected')) {
@@ -23,15 +24,46 @@ $(document).ready(function() {
                     $('#paymentDiv').show();
                     $('#nextBtn').hide();
                     let total = result.resource
+                    invoice = result.invoice
+                    invoice_length = result.invoice.length
                     if (!document.getElementById('totalDiv')) {
                         $(".card-body").append(`
                         <div id="totalDiv">
-                        <h3>Due(RM): <label id="total">` + total + `</label></h3>
+                        <div>
+                        <h3>Total Due(RM): <label id="total">` + total + `</label></h3>
                         <h3>Pay (RM):</h3>
                         <input type="text" class="form-control" id="payment" name="payment"/>
                         <span class="error invalid-feedback" id="paymentError">Payment field is required.</span>
-                        </div>`
-                        );
+                        </div>
+                        <br>
+                        <h3 class="text-center">Invoice List</h3>
+                        <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th scope="col">Invoice ID</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Invoice Total (RM)</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                        <tfoot>
+                        </tfoot>
+                        </table>
+                        </div>`);
+                        for (var i = 0; i < invoice_length; i += 1) {
+                            $("tbody").append(`
+                            <tr>
+                            <td>
+                            <input  type="checkbox" value="" id="cb` + i + `">
+                            </td>
+                            <td>` + result.invoice[i].id + `</td>
+                            <td>` + result.invoice[i].created_at + `</td>
+                            <td>` + result.invoice[i].invTotal + `</td>
+                            </tr>`);
+                            $('body').on();
+                        }
                     } else {
                         $('#total').text(total);
                     }
@@ -57,12 +89,9 @@ $(document).ready(function() {
 
     $('#form').submit(function(event) {
         event.preventDefault();
-        if( $('#payment').val().length === 0 )
-        {
+        if ($('#payment').val().length === 0) {
             $('#paymentError').show().delay(3000).fadeOut();
-        }
-        else
-        {
+        } else {
             var finalTotal = $('#total').text() - $('#payment').val();
             $.ajax({
                 url: "/payment",
@@ -77,6 +106,16 @@ $(document).ready(function() {
 
         }
     });
+    $('body').on('keyup', '#payment', function(){
+        var payment = $("#payment").val();
+        var p = parseInt(payment);
+        for (var i = 0; i < invoice_length; i++) {
+            if (p > parseInt(invoice[i].invTotal)) {
+                $(`#cb` + [i]).prop("checked", true);
+                p = p - invoice[i].invTotal;
+            }
+        }
+});
 
 });
 </script>
@@ -85,7 +124,7 @@ $(document).ready(function() {
 @section('content')
 <!-- form content -->
 <form method="POST" name="form" id="form" action="{{route('payment.store')}}" enctype="multipart/form-data">
-@csrf
+    @csrf
     <div class="card">
         <!-- /.card-header -->
         <div class="card-header">
@@ -111,11 +150,10 @@ $(document).ready(function() {
                 <a class="btn btn-primary" id="nextBtn">NEXT</a>
             </div>
             <div class="float-right" style="display:none" id="paymentDiv">
-
-            <button type="submit" class="btn btn-primary" id="paymentBtn">Proceed To Payment</button>
-                    </div>
+                <button type="submit" class="btn btn-primary" id="paymentBtn">Proceed To Payment</button>
+            </div>
             <div class="float-left" style="display:none" id="backDiv">
-                <a class="btn btn-primary" id="backBtn" >BACK</a>
+                <a class="btn btn-primary" id="backBtn">BACK</a>
             </div>
         </div>
 
