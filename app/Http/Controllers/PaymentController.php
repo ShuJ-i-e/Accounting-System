@@ -29,7 +29,14 @@ class PaymentController extends Controller
         $resource = DB::table('company')
         ->where('id', '=', $request->id)
         ->value('companyDebt');
-        return response()->json(['success'=>'Data is successfully added', 'resource'=> $resource]);
+
+        $invoices = DB::table('invoice')
+        ->join('company', 'company.id', '=', 'invoice.companyId')
+        ->select('invoice.id', 'company.companyName', 'invoice.invTotal', 'invoice.created_at')
+        ->where('company.id', '=', $request->id)
+        ->get();
+
+        return response()->json(['success'=>'Data is successfully added', 'resource'=> $resource, 'invoice' => $invoices]);
     }
     /**
      * Show the form for creating a new resource.
@@ -39,15 +46,6 @@ class PaymentController extends Controller
     public function create(Request $request)
     {
         $companies = Company::all();
-
-        if ($request->has('id')) 
-        {
-            $invoices = DB::table('invoice')
-            ->join('company', 'company.id', '=', 'invoice.companyId')
-            ->select('invoice.id', 'company.companyName', 'invoice.invTotal')
-            ->where('company.companyId', '=', $request->companyId);
-            return view('payment.createMain', compact('invoices', 'companies'));     
-        }
         return view('payment.create', compact('companies'));
     }
 
