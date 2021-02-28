@@ -5,28 +5,30 @@
 $(document).ready(function() {
     var invoice_length=0;
     var invoice;
+
+    //show related company invoices
     $('#nextBtn').click(function() {
         var companyId = $("#company option:selected").val();
-        if ($('#option1').is(':selected')) {
-            $('#companyError').show();
+        if ($('#option1').is(':selected')) { //validate company dropdown input
+            $('#companyError').show(); 
         } else {
-            $.ajax({
+            $.ajax({ //get company invoice using ajax
                 url: "/payment/" + companyId,
                 method: 'post',
                 data: {
                     _token: '{{csrf_token()}}',
                     id: companyId,
                 },
-                success: function(result) {
+                success: function(result) { //if ajax success
                     console.log(result);
-                    $("#company").attr('disabled', 'disabled');
-                    $('#backDiv').show();
-                    $('#paymentDiv').show();
-                    $('#nextBtn').hide();
-                    let total = result.resource
-                    invoice = result.invoice
-                    invoice_length = result.invoice.length
-                    if (!document.getElementById('totalDiv')) {
+                    $("#company").attr('disabled', 'disabled'); //diable company dropdown input
+                    $('#backDiv').show(); //show back button
+                    $('#paymentDiv').show(); //show payment button
+                    $('#nextBtn').hide(); //hide nest button
+                    let total = result.resource 
+                    invoice = result.invoice //overwrite global variable
+                    invoice_length = result.invoice.length //overwrite global variable
+                    if (!document.getElementById('totalDiv')) { //if totalDiv is not exist
                         $(".card-body").append(`
                         <div id="totalDiv">
                         <div>
@@ -51,8 +53,8 @@ $(document).ready(function() {
                         <tfoot>
                         </tfoot>
                         </table>
-                        </div>`);
-                        for (var i = 0; i < invoice_length; i += 1) {
+                        </div>`); //append this to card body
+                        for (var i = 0; i < invoice_length; i += 1) {  //append invoice list to table body
                             $("tbody").append(`
                             <tr>
                             <td>
@@ -62,11 +64,9 @@ $(document).ready(function() {
                             <td>` + result.invoice[i].created_at + `</td>
                             <td>` + result.invoice[i].invTotal + `</td>
                             </tr>`);
-                            $('body').on();
+                            $('body').on(); //call function to check checkbox on keyup
                         }
-                    } else {
-                        $('#total').text(total);
-                    }
+                    } 
                 },
                 error: function(data, textStatus, errorThrown) {
                     console.log(data);
@@ -75,10 +75,12 @@ $(document).ready(function() {
         }
     });
 
+    //hide company error message on click
     $('#company').click(function() {
         $('#companyError').hide();
     });
 
+    //back to original state without refreshing form
     $('#backBtn').click(function() {
         $("#company").removeAttr('disabled');
         $('#totalDiv').remove();
@@ -87,12 +89,13 @@ $(document).ready(function() {
 
     });
 
+    //on form submit
     $('#form').submit(function(event) {
-        event.preventDefault();
-        if ($('#payment').val().length === 0) {
+        event.preventDefault(); //prevent form submit without validation
+        if ($('#payment').val().length === 0) { //validate payment input
             $('#paymentError').show().delay(3000).fadeOut();
         } else {
-            var finalTotal = $('#total').text() - $('#payment').val();
+            var finalTotal = $('#total').text() - $('#payment').val(); 
             $.ajax({
                 url: "/payment",
                 method: 'post',
@@ -106,16 +109,41 @@ $(document).ready(function() {
 
         }
     });
-    $('body').on('keyup', '#payment', function(){
+
+    //run function after user finish typing
+    //avoid multiple looping to check unrelated checkbox
+    var typingTimer;                //timer identifier
+    var doneTypingInterval = 1000;  //time in ms (1 second)
+
+    //on keyup, start the countdown
+    $('body').on('keydown', '#payment', function(){
+        clearTimeout(typingTimer);
+        if ($('#payment').val()) {
+            typingTimer = setTimeout(doneTyping, doneTypingInterval);
+        }
+    });
+
+    //user is "finished typing," check and uncheck related checkbox
+    function doneTyping () {
         var payment = $("#payment").val();
         var p = parseInt(payment);
-        for (var i = 0; i < invoice_length; i++) {
-            if (p > parseInt(invoice[i].invTotal)) {
+        var i = 0;
+        var loop = 1;
+        while(loop == 1 && i < invoice_length)
+        {
+            if (p >= parseInt(invoice[i].invTotal)) {
                 $(`#cb` + [i]).prop("checked", true);
                 p = p - invoice[i].invTotal;
             }
+            else
+            {
+                $(`#cb` + [i]).prop("checked", false);
+                loop = 0;
+            }
+            i++;
+            console.log(loop);
         }
-});
+    }    
 
 });
 </script>
