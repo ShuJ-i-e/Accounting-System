@@ -5,6 +5,7 @@
 $(document).ready(function() {
     var invoice_length=0;
     var invoice;
+    var balance;
 
     //show related company invoices
     $('#nextBtn').click(function() {
@@ -25,16 +26,20 @@ $(document).ready(function() {
                     $('#backDiv').show(); //show back button
                     $('#paymentDiv').show(); //show payment button
                     $('#nextBtn').hide(); //hide nest button
-                    let total = result.resource 
-                    invoice = result.invoice //overwrite global variable
-                    invoice_length = result.invoice.length //overwrite global variable
+                    let total = result.resource[0].companyDebt
+                    balance = result.resource[0].companyBalance //overwrite global variable, value retrieve from database
+                    invoice = result.invoice //overwrite global variable, value retrieve from database
+                    invoice_length = result.invoice.length //overwrite global variable, value retrieve from database
                     if (!document.getElementById('totalDiv')) { //if totalDiv is not exist
                         $(".card-body").append(`
                         <div id="totalDiv">
                         <div>
                         <h3>Total Due(RM): <label id="total">` + total + `</label></h3>
+                        <h3>Initial Balance(RM): <label id="balance">` + balance + `</label></h3>
+                        <div id="payDiv">
                         <h3>Pay (RM):</h3>
                         <input type="text" class="form-control" id="payment" name="payment"/>
+                        </div>
                         <span class="error invalid-feedback" id="paymentError">Payment field is required.</span>
                         </div>
                         <br>
@@ -58,7 +63,7 @@ $(document).ready(function() {
                             $("tbody").append(`
                             <tr>
                             <td>
-                            <input  type="checkbox" value="" id="cb` + i + `">
+                            <input  class="checkbox" type="checkbox" value="" id="cb` + i + `">
                             </td>
                             <td>` + result.invoice[i].id + `</td>
                             <td>` + result.invoice[i].created_at + `</td>
@@ -125,25 +130,97 @@ $(document).ready(function() {
 
     //user is "finished typing," check and uncheck related checkbox
     function doneTyping () {
+
+        //initialize components
+        //hide error message
+        $('#pError').hide();
+
+        //clear all checkbox
+        var l = 0;
+        while(l < invoice_length)
+        {
+            $(`#cb` + [l]).removeAttr('disabled');
+            $(`#cb` + [l]).prop("checked", false);
+            l++;
+        }
+
+        //show balance after payment
+        if (!document.getElementById('balDiv')) {
+            $("#payDiv").append(
+                `<div id="balDiv">
+                Balance after payment:
+                <label id="balAfter"></label>
+                </div>`
+            );
+        }
         var payment = $("#payment").val();
-        var p = parseInt(payment);
+        var bal = parseInt(payment) + parseInt(balance);
         var i = 0;
         var loop = 1;
+        //check invoice if payment is enough
         while(loop == 1 && i < invoice_length)
         {
-            if (p >= parseInt(invoice[i].invTotal)) {
+            if (bal >= parseInt(invoice[i].invTotal)) {
                 $(`#cb` + [i]).prop("checked", true);
-                p = p - invoice[i].invTotal;
+                bal = bal - invoice[i].invTotal;
+                console.log('checked');
             }
             else
             {
                 $(`#cb` + [i]).prop("checked", false);
                 loop = 0;
+                console.log('unchecked');
+
             }
             i++;
-            console.log(loop);
+            
         }
+        $("#balAfter").text(bal.toFixed(2));
+
+        //find the smallest invoice total among the list
+        for (var i = 0; i < invoice_length - 1; i += 1)
+        {
+            smallest=invoice[i].invTotal;
+            next=invoice[i+1].invTotal;
+            console.log(i);
+            if(next < invoice[i].invTotal)
+            {
+                smallest=invoice[i+1].invTotal;
+            }
+        }
+
+        //diable all checkbox if the payment amount is too small
+        if(bal < smallest)
+        {
+            for (var i = 0; i < invoice_length; i += 1)
+            {
+                $(`#cb` + [i]).prop('disabled', 'disabled');
+                if (!document.getElementById('pDiv')) {
+                $("#payDiv").append(
+                    `<div id="pDiv">
+                    <span class="error invalid-feedback" id="pError">Payment is not enough to pay any invoice</span>
+                    </div>`
+                );
+                $('#pError').show();
+                }
+            }
+        }
+
     }    
+
+    $('body').on('change', '.checkbox', function(){
+        var payment = $("#payment").val();
+        var bal = parseInt(payment) + parseInt(balance);
+
+        for (var i = 0; i < invoice_length; i += 1)
+        {
+            if( $(`#cb` + [i]).is(":checked")) 
+            {
+                bal = bal - parseInt(invoice[i].invTotal);
+            }
+        }
+        $("#balAfter").text(bal);
+    });
 
 });
 </script>
