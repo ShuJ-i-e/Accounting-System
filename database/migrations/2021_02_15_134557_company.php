@@ -21,6 +21,8 @@ class Company extends Migration
             $table->text('companyPhone');
             $table->decimal('myDebt', 8, 2)->default('0.00');
             $table->decimal('companyDebt', 8, 2)->default('0.00');
+            $table->decimal('myBalance', 8, 2)->default('0.00');
+            $table->decimal('companyBalance', 8, 2)->default('0.00');
         });
     }
 
