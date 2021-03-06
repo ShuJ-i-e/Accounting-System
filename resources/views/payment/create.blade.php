@@ -41,6 +41,7 @@ $(document).ready(function() {
                         <input type="text" class="form-control" id="payment" name="payment"/>
                         </div>
                         <span class="error invalid-feedback" id="paymentError">Payment field is required.</span>
+                        Balance after payment: <label id="balAfter">`+ balance +`</label>
                         </div>
                         <br>
                         <h3 class="text-center">Invoice List</h3>
@@ -94,27 +95,6 @@ $(document).ready(function() {
 
     });
 
-    //on form submit
-    $('#form').submit(function(event) {
-        event.preventDefault(); //prevent form submit without validation
-        if ($('#payment').val().length === 0) { //validate payment input
-            $('#paymentError').show().delay(3000).fadeOut();
-        } else {
-            var finalTotal = $('#total').text() - $('#payment').val(); 
-            $.ajax({
-                url: "/payment",
-                method: 'post',
-                data: {
-                    _token: '{{csrf_token()}}',
-                    companyId: $("#company option:selected").val(),
-                    payment: $("#payment").val(),
-                    finalTotal: finalTotal,
-                }
-            });
-
-        }
-    });
-
     //run function after user finish typing
     //avoid multiple looping to check unrelated checkbox
     var typingTimer;                //timer identifier
@@ -144,52 +124,20 @@ $(document).ready(function() {
             l++;
         }
 
-        //show balance after payment
-        if (!document.getElementById('balDiv')) {
-            $("#payDiv").append(
-                `<div id="balDiv">
-                Balance after payment:
-                <label id="balAfter"></label>
-                </div>`
-            );
-        }
+        //find the smallest invoice total among the list
         var payment = $("#payment").val();
         var bal = parseInt(payment) + parseInt(balance);
-        var i = 0;
-        var loop = 1;
-        //check invoice if payment is enough
-        while(loop == 1 && i < invoice_length)
-        {
-            if (bal >= parseInt(invoice[i].invTotal)) {
-                $(`#cb` + [i]).prop("checked", true);
-                bal = bal - invoice[i].invTotal;
-                console.log('checked');
-            }
-            else
-            {
-                $(`#cb` + [i]).prop("checked", false);
-                loop = 0;
-                console.log('unchecked');
-
-            }
-            i++;
-            
-        }
-        $("#balAfter").text(bal.toFixed(2));
-
-        //find the smallest invoice total among the list
         for (var i = 0; i < invoice_length - 1; i += 1)
         {
             smallest=invoice[i].invTotal;
             next=invoice[i+1].invTotal;
-            console.log(i);
             if(next < invoice[i].invTotal)
             {
                 smallest=invoice[i+1].invTotal;
             }
         }
 
-        //diable all checkbox if the payment amount is too small
+        //disable all checkbox if the payment amount is too small
         if(bal < smallest)
         {
             for (var i = 0; i < invoice_length; i += 1)
@@ -206,20 +154,87 @@ $(document).ready(function() {
             }
         }
 
+        var i = 0;
+        var loop = 1;
+
+        //check checkbox if payment is enough
+        while(loop == 1 && i < invoice_length)
+        {
+            if (bal >= parseInt(invoice[i].invTotal)) 
+            {
+                $(`#cb` + [i]).prop("checked", true);
+                bal = bal - invoice[i].invTotal;
+            }
+            else
+            {
+                $(`#cb` + [i]).prop("checked", false);
+                loop = 0;
+            }
+            i++;
+            
+        }
+        $("#balAfter").text(bal.toFixed(2));
+
     }    
 
+    //on checkbox change, recalculate balance and payment
     $('body').on('change', '.checkbox', function(){
-        var payment = $("#payment").val();
-        var bal = parseInt(payment) + parseInt(balance);
+        var payment = 0;
+        var bal = 0;
 
         for (var i = 0; i < invoice_length; i += 1)
         {
             if( $(`#cb` + [i]).is(":checked")) 
             {
-                bal = bal - parseInt(invoice[i].invTotal);
+                payment = payment + parseInt(invoice[i].invTotal) - balance;
             }
         }
         $("#balAfter").text(bal);
+        $("#payment").val(payment);
+    });
+
+    //on form submit
+    $('#form').submit(function(event) {
+        event.preventDefault(); //prevent form submit without validation
+        var debtAfter=0;
+        var invoiceId = [];
+        if ($('#payment').val().length === 0) //validate payment input
+        {   
+            $('#paymentError').show().delay(3000).fadeOut();
+        }
+        else 
+        {
+            for (var i = 0; i < invoice_length; i += 1)
+            {
+                if(!$(`#cb` + [i]).is(":checked")) 
+                {
+                    debtAfter = debtAfter + parseInt(invoice[i].invTotal);
+                }
+                else
+                {
+                    invoiceId.push(invoice[i].id);
+                }
+            }
+            $.ajax({
+                url: "/payment",
+                method: 'post',
+                data: {
+                    _token: '{{csrf_token()}}',
+                    companyId: $("#company option:selected").val(),
+                    payment: $("#payment").val(), //payment amount
+                    debtAfter: debtAfter, //remaining company debt
+                    balance: $("#balAfter").text(),  //new company balance
+                    inoviceIdList: invoiceId,
+                },
+                success: function(result) { //if ajax success
+                    window.location=result.url;
+                },
+                error: function(data, textStatus, errorThrown) {
+                    console.log(data);
+                }
+            });
+
+        }
     });
 
 });
