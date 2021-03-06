@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use DB;
 use App\Models\Payment;
 use App\Models\Company;
+use App\Models\Invoice;
 use Illuminate\Http\Request;
 
 class PaymentController extends Controller
@@ -20,16 +21,24 @@ class PaymentController extends Controller
         ->select('payment.id', 'company.companyName', 'payment.payment')
         ->paginate(10);
          
-        return view('payment.list',compact('payments'))
-            ->with('i', (request()->input('page', 1) - 1) * 5);
+        return view('payment.list',compact('payments'))->with('i', (request()->input('page', 1) - 1) * 5);
     }
 
     public function setCompanyId(Request $request)
     {
         $resource = DB::table('company')
+        ->select('companyDebt', 'companyBalance')
         ->where('id', '=', $request->id)
-        ->value('companyDebt');
-        return response()->json(['success'=>'Data is successfully added', 'resource'=> $resource]);
+        ->get();
+        
+        $invoices = DB::table('invoice')
+        ->join('company', 'company.id', '=', 'invoice.companyId')
+        ->select('invoice.id', 'company.companyName', 'invoice.invTotal', 'invoice.created_at')
+        ->where('company.id', '=', $request->id)
+        ->where('payment', '=', '0')
+        ->get();
+        
+        return response()->json(['success'=>'Data is successfully added', 'resource'=> $resource, 'invoice' => $invoices]);
     }
     /**
      * Show the form for creating a new resource.
@@ -39,15 +48,6 @@ class PaymentController extends Controller
     public function create(Request $request)
     {
         $companies = Company::all();
-
-        if ($request->has('id')) 
-        {
-            $invoices = DB::table('invoice')
-            ->join('company', 'company.id', '=', 'invoice.companyId')
-            ->select('invoice.id', 'company.companyName', 'invoice.invTotal')
-            ->where('company.companyId', '=', $request->companyId);
-            return view('payment.createMain', compact('invoices', 'companies'));     
-        }
         return view('payment.create', compact('companies'));
     }
 
@@ -65,10 +65,21 @@ class PaymentController extends Controller
         $payment->save();
         
         $company = Company::find($request->companyId);
-        $company->companyDebt = $request->finalTotal;
+        $company->companyDebt = $request->debtAfter;
+        $company->companyBalance = $request->balance;
         $company->save();
-        return redirect()->action([PaymentController::class, 'index'])
-                        ->with('success','Payment created successfully.');
+
+        
+        $invoiceLength = count($request->inoviceIdList);
+        for ($i = 0; $i < $invoiceLength; $i++)  
+        {
+            $invoice = Invoice::find($request->inoviceIdList[$i]);
+            $invoice->payment = true;
+            $invoice->save();
+        }
+        return response()->json(['url'=>url('/payment')]);
+        // return route('post.view', ['id' => $result]);
+        // return redirect()->action([PaymentController::class, 'index'])->with('success','Payment created successfully.');
     }
 
     /**
