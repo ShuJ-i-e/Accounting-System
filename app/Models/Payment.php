@@ -11,7 +11,7 @@ class Payment extends Model
     protected $table = 'payment';
     protected $fillable = [
         'companyId',
-        'payment'
+        'payment',
     ];
 
 }
