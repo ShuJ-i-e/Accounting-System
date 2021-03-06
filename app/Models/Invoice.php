@@ -12,5 +12,6 @@ class Invoice extends Model
     protected $fillable = [
         'companyId',
         'invTotal',
+        'payment'
     ];
 }
