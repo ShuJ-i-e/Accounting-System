@@ -54,7 +54,7 @@ $(document).ready(function() {
                             <i id="enableEditBtn" class="fa fa-edit"></i>
                         </a>
                     </div>
-                    <span class="error invalid-feedback" id="prodNameError">1111</span>
+                    <span class="error invalid-feedback" id="prodNameError">Product Name field is required</span>
                 </div>
             </div>
         </div>
