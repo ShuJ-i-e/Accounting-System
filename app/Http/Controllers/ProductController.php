@@ -77,7 +77,9 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         $resource = Product::find($product)->first();
-        return view('product.create')->with('resource', $resource);
+        $edit = true;
+
+        return view('product.show', compact('resource', 'edit'));
     }
 
     /**
