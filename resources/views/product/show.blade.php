@@ -4,7 +4,6 @@
 <script>
 $(document).ready(function() {
     $('#enableEditBtn').click(function() {
-        $('#prodName').removeAttr('disabled');
         $('#editBtn').show();
 
     });
@@ -14,7 +13,6 @@ $(document).ready(function() {
         if($('#prodName').val().length === 0)
         {
             $('#prodNameError').show();
-            $('prodName').val("");
         }
         else
         {
@@ -50,7 +48,7 @@ $(document).ready(function() {
                         @endif />
 
                     <div class="input-group-btn">
-                        <a class="btn btn-default">
+                        <a class="btn btn-default" href="{{ route('product.edit',$resource->id) }}">
                             <i id="enableEditBtn" class="fa fa-edit"></i>
                         </a>
                     </div>
