@@ -90,11 +90,7 @@ class ProductController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Product $product)
-    {
-        $request->validate([
-            'prodName' => 'required',
-        ]);
-    
+    {    
         $product->update($request->all());
     
         return redirect()->action([ProductController::class, 'index'])

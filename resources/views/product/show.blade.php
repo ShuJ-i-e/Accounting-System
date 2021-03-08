@@ -55,11 +55,6 @@ $(document).ready(function() {
                         </a>
                     </div>
                     <span class="error invalid-feedback" id="prodNameError">1111</span>
-
-                    <!-- @error('prodName')
-                    <span class="error invalid-feedback" id="prodNameError">{{ $message }}</span>
-                    @enderror -->
-
                 </div>
             </div>
         </div>
