@@ -77,7 +77,9 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         $resource = Product::find($product)->first();
-        return view('product.create')->with('resource', $resource);
+        $edit = true;
+
+        return view('product.show', compact('resource', 'edit'));
     }
 
     /**
@@ -88,11 +90,7 @@ class ProductController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Product $product)
-    {
-        $request->validate([
-            'prodName' => 'required',
-        ]);
-    
+    {    
         $product->update($request->all());
     
         return redirect()->action([ProductController::class, 'index'])

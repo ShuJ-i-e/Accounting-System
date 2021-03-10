@@ -71,7 +71,9 @@ class CompanyController extends Controller
     public function edit(Company $company)
     {
         $resource = Company::find($company)->first();
-        return view('company.create')->with('resource', $resource);
+        $edit = true;
+
+        return view('company.show', compact('resource', 'edit'));
     }
 
     /**

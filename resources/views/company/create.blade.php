@@ -7,31 +7,26 @@
         <h3>Insert New Company</h3>
     </div>
     <!-- form content -->
-    @if(isset($resource))
-    <form method="POST" action="{{route('company.update', [$resource->id])}}" enctype="multipart/form-data">
-        @method('put')
-        @else
         <form method="POST" action="{{route('company.store')}}" enctype="multipart/form-data">
-            @endif
             @csrf
             <!-- /.card-body -->
             <div class="card-body">
                 <div class="form-group">
                     <label>Company Name</label>
                     <input type="text" class="form-control {{ $errors->has('companyName') ? 'is-invalid' :'' }}" name="companyName"
-                        id="companyName" value="{{ old('companyName', isset($resource) ? $resource->companyName : '') }}" placeholder="">
+                        id="companyName" placeholder="">
                     @error('companyName')
                     <span class="error invalid-feedback">{{ $message }}</span>
                     @enderror
                     <label>Company Address</label>
                     <input type="text" class="form-control {{ $errors->has('companyAddress') ? 'is-invalid' :'' }}" name="companyAddress"
-                        id="companyAddress" value="{{ old('companyAddress', isset($resource) ? $resource->companyAddress : '') }}" placeholder="">
+                        id="companyAddress" placeholder="">
                     @error('companyAddress')
                     <span class="error invalid-feedback">{{ $message }}</span>
                     @enderror
                     <label>Company Phone Number</label>
                     <input type="text" class="form-control {{ $errors->has('companyPhone') ? 'is-invalid' :'' }}" name="companyPhone"
-                        id="companyPhone" value="{{ old('companyPhone', isset($resource) ? $resource->companyPhone : '') }}" placeholder="">
+                        id="companyPhone" placeholder="">
                     @error('companyPhone')
                     <span class="error invalid-feedback">{{ $message }}</span>
                     @enderror
@@ -41,7 +36,7 @@
             <!-- /.card-footer -->
             <div class="card-footer">
                 <button type="submit"
-                    class="btn btn-primary">{{ isset($resource) ? 'Update Company' : 'Insert New Company' }}</button>
+                    class="btn btn-primary">Insert New Company</button>
             </div>
         </form>
 </div>
