@@ -29,16 +29,16 @@ class PaymentController extends Controller
         $resource = DB::table('company')
         ->select('companyDebt', 'companyBalance')
         ->where('id', '=', $request->id)
-        ->get();
+        ->get(); //get companyDebt and companyBalance based on company id
         
         $invoices = DB::table('invoice')
         ->join('company', 'company.id', '=', 'invoice.companyId')
         ->select('invoice.id', 'company.companyName', 'invoice.invTotal', 'invoice.created_at')
         ->where('company.id', '=', $request->id)
         ->where('payment', '=', '0')
-        ->get();
+        ->get(); //get unpaid invoice based on company id
         
-        return response()->json(['success'=>'Data is successfully added', 'resource'=> $resource, 'invoice' => $invoices]);
+        return response()->json(['success'=>'Data is successfully added', 'resource'=> $resource, 'invoice' => $invoices]); //return json response to ajax request
     }
     /**
      * Show the form for creating a new resource.
@@ -47,7 +47,6 @@ class PaymentController extends Controller
      */
     public function create(Request $request)
     {
-        $companies = Company::all();
         return view('payment.create', compact('companies'));
     }
 
@@ -62,14 +61,14 @@ class PaymentController extends Controller
         $payment = new Payment;
         $payment->companyId = $request->companyId;
         $payment->payment = $request->payment;
-        $payment->save();
+        $payment->save(); //create new row in payment table
         
         $company = Company::find($request->companyId);
         $company->companyDebt = $request->debtAfter;
         $company->companyBalance = $request->balance;
-        $company->save();
+        $company->save(); //update company debt and balance
 
-        
+        //update invoice from unpaid to paid, table-invoice, column-payment
         $invoiceLength = count($request->inoviceIdList);
         for ($i = 0; $i < $invoiceLength; $i++)  
         {
@@ -77,9 +76,7 @@ class PaymentController extends Controller
             $invoice->payment = true;
             $invoice->save();
         }
-        return response()->json(['url'=>url('/payment')]);
-        // return route('post.view', ['id' => $result]);
-        // return redirect()->action([PaymentController::class, 'index'])->with('success','Payment created successfully.');
+        return response()->json(['url'=>url('/payment')]); //return response to ajax request
     }
 
     /**

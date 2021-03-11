@@ -88,10 +88,10 @@ $(document).ready(function() {
 
     //back to original state without refreshing form
     $('#backBtn').click(function() {
-        $("#company").removeAttr('disabled');
-        $('#totalDiv').remove();
-        $('#paymentDiv').hide();
-        $('#nextBtn').show();
+        $("#company").removeAttr('disabled'); //enable company dropdown list
+        $('#totalDiv').remove(); //remove totalDiv
+        $('#paymentDiv').hide(); //hide paymentDiv
+        $('#nextBtn').show(); //show nextBtn
 
     });
 
@@ -125,8 +125,8 @@ $(document).ready(function() {
         }
 
         //find the smallest invoice total among the list
-        var payment = $("#payment").val();
-        var bal = parseInt(payment) + parseInt(balance);
+        var payment = $("#payment").val(); //value from payment input
+        var bal = parseInt(payment) + parseInt(balance); //initial bal value = value from payment input + initial balance
         for (var i = 0; i < invoice_length - 1; i += 1)
         {
             smallest=invoice[i].invTotal;
@@ -173,7 +173,7 @@ $(document).ready(function() {
             i++;
             
         }
-        $("#balAfter").text(bal.toFixed(2));
+        $("#balAfter").text(bal.toFixed(2)); //balance after payment
 
     }    
 
