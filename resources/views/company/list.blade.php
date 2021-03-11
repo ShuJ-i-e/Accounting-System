@@ -14,6 +14,10 @@
         <div class="pull-right">
             <a class="btn btn-success" href="/company/create"> Create New Company</a>
         </div>
+        <div class="float-right">
+            <a class="btn btn-success" href="/company?export=pdf"> Download Company List</a>
+        </div>
+
     </div>
 </div>
 
@@ -23,7 +27,8 @@
         <tr>
             <th scope="col">Company ID</th>
             <th scope="col">Company Name</th>
-            <th scope="col">Total (RM)</th>
+            <th scope="col">Total Due(RM)</th>
+            <th scope="col">Total Balance(RM)</th>
             <th scope="col">Actions</th>
         </tr>
     </thead>
@@ -32,7 +37,8 @@
     <tr>
         <td>{{ $company->id }}</td>
         <td>{{ $company->companyName }}</td>
-        <td>{{ $company->total }}</td>
+        <td>{{ $company->companyDebt }}</td>
+        <td>{{ $company->companyBalance }}</td>
         <td>
             <form action="{{ route('company.destroy',$company->id) }}" method="POST">
                 @csrf
