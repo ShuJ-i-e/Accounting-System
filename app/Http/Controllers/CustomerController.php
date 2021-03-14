@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use DB;
+use PDF;
 use App\Models\Company;
 use App\Models\Product;
 use App\Models\Invoice;
@@ -47,25 +48,33 @@ class CustomerController extends Controller
      */
     public function store(Request $request)
     {
-        $invId = count(Invoice::all())+1;
+        $invId = Invoice::all()->last()->id + 1;
         $invoice = new Invoice;
         $invoice->companyId = $request['company'];
         $invoice->invTotal = $request['invTotal'];
         $invoice->save();
+        
+        $company = Company::find($request['company']);
+        $company->companyDebt = $company->companyDebt + $request['invTotal'];
+        $company->save();
+
         for($orderCount = 0; $orderCount <= $request->rowNum ; $orderCount++)
         {
-            $order = new Order;
-            $order->invId = $invId;
-            $order->prodId = $request->product[$orderCount];
-            $order->weight = $request->weight[$orderCount];
-            $order->Mweight = $request->Mweight[$orderCount];
-            $order->price = $request->price[$orderCount];
-            $order->total = $request->total[$orderCount];
-
-            $order->save();
+            if ( isset($request->product[$orderCount])) 
+            {
+                $order = new Order;
+                $order->invId = $invId;
+                $order->prodId = $request->product[$orderCount];
+                $order->weight = $request->weight[$orderCount];
+                $order->Mweight = $request->Mweight[$orderCount];
+                $order->price = $request->price[$orderCount];
+                $order->total = $request->total[$orderCount];
+                $order->remarks = $request->remarks[$orderCount];
+                $order->save();
+            }
         }
 
-        return redirect()->action([CustomerController::class, 'create'])
+        return redirect()->action([CustomerController::class, 'index'])
                         ->with('success','Invoice inserted successfully.');
     }
 
@@ -77,8 +86,29 @@ class CustomerController extends Controller
      */
     public function show(Invoice $invoice)
     {
-        $resource = Invoice::find($invoice)->first();
-        return view('customer.show')->with('resource', $resource);
+        $companies = Company::all();
+        $products = Product::all();
+
+        $invoices = DB::table('invoice')
+        ->join('company', 'company.id', '=', 'invoice.companyId')
+        ->where('id', '=', "56")
+        ->get();
+
+        $orders = DB::table('order')
+        ->join('invoice', 'invoice.id', '=', 'order.invId')
+        ->join('product', 'product.id', '=', 'order.prodId')
+        ->where('invId', '=', "56")
+        ->get();
+
+        // $resource = Invoice::find($invoice)->first();
+        $data = array(
+            "invoices" => $invoices,
+            "orders" => $orders,
+            "companies" => $companies,
+            "products" => $products
+        ); 
+
+        return view('customer.edit')->with($data);
     }
 
     /**
@@ -89,8 +119,21 @@ class CustomerController extends Controller
      */
     public function edit(Invoice $invoice)
     {
-        $resource = Invoice::find($invoice)->first();
-        return view('customer.create')->with('resource', $resource);
+        $invoices = DB::table('invoice')
+        ->join('company', 'company.id', '=', 'invoice.companyId')
+        ->where('id', '=', $invoice);
+
+        $orders = DB::table('order')
+        ->join('invoice', 'invoice.id', '=', 'order.invId')
+        ->join('product', 'product.id', '=', 'order.prodId')
+        ->where('invId', '=', $invoice);
+
+        // $invoice = $invoices->find($invoice);
+ 
+        // $resource = Invoice::find($invoice)->first();
+        // $companies = Company::where($id);
+        // $products = Product::all();
+        return view('customer.create')->compact($invoices, $orders);
     }
 
     /**
