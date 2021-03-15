@@ -84,31 +84,26 @@ class CustomerController extends Controller
      * @param  \App\Models\Invoice  $invoice
      * @return \Illuminate\Http\Response
      */
-    public function show(Invoice $invoice)
+    public function show(int $invoice)
     {
-        $companies = Company::all();
-        $products = Product::all();
-
         $invoices = DB::table('invoice')
         ->join('company', 'company.id', '=', 'invoice.companyId')
-        ->where('id', '=', "56")
-        ->get();
+        ->select('company.companyName', 'invoice.invTotal', 'invoice.id')
+        ->where('invoice.id', "=", $invoice)
+        ->first();
 
         $orders = DB::table('order')
         ->join('invoice', 'invoice.id', '=', 'order.invId')
         ->join('product', 'product.id', '=', 'order.prodId')
-        ->where('invId', '=', "56")
+        ->select('product.prodName', 'order.weight', 'order.Mweight', 'order.price', 'order.total', 'order.remarks')
+        ->where('order.invId', "=", $invoice)
         ->get();
 
-        // $resource = Invoice::find($invoice)->first();
-        $data = array(
+        $resource = array(
             "invoices" => $invoices,
             "orders" => $orders,
-            "companies" => $companies,
-            "products" => $products
         ); 
-
-        return view('customer.edit')->with($data);
+        return view('customer.show')->with($resource);
     }
 
     /**
