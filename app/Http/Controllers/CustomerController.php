@@ -84,7 +84,7 @@ class CustomerController extends Controller
      * @param  \App\Models\Invoice  $invoice
      * @return \Illuminate\Http\Response
      */
-    public function show(int $invoice)
+    public function show(int $invoice, Request $request)
     {
         $invoices = DB::table('invoice')
         ->join('company', 'company.id', '=', 'invoice.companyId')
@@ -103,6 +103,15 @@ class CustomerController extends Controller
             "invoices" => $invoices,
             "orders" => $orders,
         ); 
+
+        if ($request->has('export')) 
+        {
+             if ($request->get('export') == 'pdf') {
+                 $pdf = PDF::loadView('customer.pdfView', compact('invoices', 'orders'));
+                 return $pdf->download('invoice.pdf');
+             }
+        }
+
         return view('customer.show')->with($resource);
     }
 
