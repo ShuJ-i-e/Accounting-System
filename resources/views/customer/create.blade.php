@@ -4,9 +4,8 @@
 <script>
 $(document).ready(function() {
     var count = 0;
-
     $(".add-row").click(function() {
-        count++;
+        count += 1;
         var row = '<tr>' +
             '<td><button type="button" class="btn btn-danger btn-sm delete-row"> <i class="fa fa-trash"></i></button></td>' +
             '<td><select class="form-control" name="product[' + count + ']" id="product[' + count +']">' +
@@ -23,14 +22,10 @@ $(document).ready(function() {
             '</tr>';
         $("tbody").append(row);
         document.getElementById("rowNum").value = count;
-        console.log(count);
     });
 
     $(document).on("click", ".delete-row", function() {
-        count--;
         $(this).parents("tr").remove();
-        document.getElementById("rowNum").value = count;
-        console.log(count);
         //recalculate grantTotal on delete
         var grantTotal=0;
         $('.form-total').each(function(){
