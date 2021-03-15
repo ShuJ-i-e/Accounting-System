@@ -2,10 +2,9 @@
 
 @section('js')
 <script>
-$(document).ready(function() {
+$(document).ready(function() {    
     $('#enableEditBtn').click(function() {
         $('#editBtn').show();
-
     });
 
     $('#editForm').submit(function(event) {
@@ -48,8 +47,8 @@ $(document).ready(function() {
                         @endif />
 
                     <div class="input-group-btn">
-                        <a class="btn btn-default" href="{{ route('product.edit',$resource->id) }}">
-                            <i id="enableEditBtn" class="fa fa-edit"></i>
+                        <a id="enableEditBtn" class="btn btn-default" href="{{ route('product.edit',$resource->id) }}" @if (isset($edit)) style="display:none" @endif>
+                            <i  class="fa fa-edit"></i>
                         </a>
                     </div>
                     <span class="error invalid-feedback" id="prodNameError">Product Name field is required</span>

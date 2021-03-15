@@ -42,7 +42,7 @@ $(document).ready(function() {
                     <h3>Company Information</h3>
                 </label>
                 <div class="input-group-btn">
-                    <a class="btn btn-default" href="{{ route('company.edit',$resource->id) }}">
+                    <a class="btn btn-default" href="{{ route('company.edit',$resource->id) }}" @if (isset($edit)) style="display:none" @endif>
                         <i id="enableEditBtn" class="fa fa-edit"></i>
                     </a>
                 </div>
