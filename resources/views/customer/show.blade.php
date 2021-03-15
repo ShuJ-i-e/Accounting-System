@@ -5,7 +5,9 @@
     <!-- /.card-header -->
     <div class="card-header">
         <h3>Invoice {{ $invoices->id }}</h3>
+
     </div>
+
     <div class="card-body">
         <div class="form-group">
             <label for="company">Company Name</label>
@@ -73,7 +75,8 @@
     <!-- /.card-footer -->
 
     <div class="card-footer">
-        <button type="submit" class="btn btn-primary">Edit Invoice</button>
-    </div>
-</div>
+        <a class="btn btn-primary"  href="{{ route('customer.index') }}">Back</a>
+            <a class="btn btn-success" href="/customer/{{$invoices->id}}?export=pdf"> Download Product List</a>
+
+            </div>
 @stop
