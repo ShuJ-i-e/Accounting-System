@@ -11,7 +11,7 @@
     <div class="card-body">
         <div class="form-group">
             <label for="company">Company Name</label>
-            <label type="text" class="form-control" id="compName[0]" name="compName[0]" readonly="readonly">{{ $invoices->companyName }}</label>
+            <label type="text" class="form-control" id="compName" name="compName" readonly="readonly">{{ $invoices->companyName }}</label>
             <br>
             <br>
             <br>
@@ -30,21 +30,19 @@
                     @foreach($orders as $order)
 
                     <tr>
-                        <td><label id="prodName[0]" name="prodName[0]" value="">{{ $order->prodName }}</label>
+                        <td><label id="prodName[{{$loop->index}}]" name="prodName[{{$loop->index}}]" value="">{{ $order->prodName }}</label>
                         </td>
-                        <td><label id="price[0]" name="price[0]" onkeyup="calcTotal(0)"
-                                value="">{{ $order->weight }}</label>
+                        <td><label id="price[{{$loop->index}}]" name="price[{{$loop->index}}]">{{ $order->weight }}</label>
                         </td>
 
-                        <td><label id="weight[0]" name="weight[0]" onkeyup="calcTotal(0)">{{ $order->weight }}</label>
+                        <td><label id="weight[{{$loop->index}}]" name="weight[{{$loop->index}}]">{{ $order->weight }}</label>
                         </td>
-                        <td><label id="Mweight[0]" name="Mweight[0]"
-                                onkeyup="calcTotal(0)">{{ $order->Mweight }}</label>
+                        <td><label id="Mweight[{{$loop->index}}]" name="Mweight[{{$loop->index}}]">{{ $order->Mweight }}</label>
                         </td>
-                        <td><label id="remarks[0]" name="remarks[0]">{{ $order->remarks }}</label>
+                        <td><label id="remarks[{{$loop->index}}]" name="remarks[{{$loop->index}}]">{{ $order->remarks }}</label>
                         </td>
                         <td><label type="text" class="form-control form-total" id="total[0]"
-                                name="total[0]" readonly="readonly">{{ $order->total }}</label>
+                                name="total[{{$loop->index}}]" readonly="readonly">{{ $order->total }}</label>
                         </td>
 
                     </tr>
@@ -76,7 +74,7 @@
 
     <div class="card-footer">
         <a class="btn btn-primary"  href="{{ route('customer.index') }}">Back</a>
-            <a class="btn btn-success" href="/customer/{{$invoices->id}}?export=pdf"> Download Product List</a>
+            <a class="btn btn-success" href="/customer/{{$invoices->id}}?export=pdf"> Download Invoice</a>
 
             </div>
 @stop
