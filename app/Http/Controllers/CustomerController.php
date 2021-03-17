@@ -121,23 +121,30 @@ class CustomerController extends Controller
      * @param  \App\Models\Invoice  $invoice
      * @return \Illuminate\Http\Response
      */
-    public function edit(Invoice $invoice)
+    public function edit(int $invoice)
     {
         $invoices = DB::table('invoice')
         ->join('company', 'company.id', '=', 'invoice.companyId')
-        ->where('id', '=', $invoice);
+        ->select('company.companyName', 'invoice.invTotal', 'invoice.id')
+        ->where('invoice.id', "=", $invoice)
+        ->first();
 
         $orders = DB::table('order')
         ->join('invoice', 'invoice.id', '=', 'order.invId')
         ->join('product', 'product.id', '=', 'order.prodId')
-        ->where('invId', '=', $invoice);
+        ->select('product.prodName', 'order.weight', 'order.Mweight', 'order.price', 'order.total', 'order.remarks')
+        ->where('order.invId', "=", $invoice)
+        ->get();
 
-        // $invoice = $invoices->find($invoice);
- 
-        // $resource = Invoice::find($invoice)->first();
-        // $companies = Company::where($id);
-        // $products = Product::all();
-        return view('customer.create')->compact($invoices, $orders);
+        $products = Product::all();
+
+        $resource = array(
+            "invoices" => $invoices,
+            "orders" => $orders,
+            "products" => $products
+        ); 
+
+        return view('customer.edit')->with($resource);
     }
 
     /**
@@ -167,9 +174,12 @@ class CustomerController extends Controller
      * @param  \App\Models\Invoice  $invoice
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Invoice $invoice)
+    public function destroy(int $id)
     {
-        $invoice->delete();
+        $invoice = Invoice::find($id);
+        if($invoice){
+            $invoice->delete();
+        }
         return redirect()->action([CustomerController::class, 'index'])
                         ->with('success','Invoice deleted successfully.');
     }
