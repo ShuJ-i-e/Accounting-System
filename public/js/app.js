@@ -29,11 +29,4 @@ $("#show-sidebar").click(function() {
 $(".page-wrapper").addClass("toggled");
 });
 
-// $("#nextBtn").on("click", function() {
-//   $(this).prop("disabled", true);
-// });
-
-
- 
- 
 });
