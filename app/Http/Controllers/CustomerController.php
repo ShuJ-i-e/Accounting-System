@@ -125,7 +125,7 @@ class CustomerController extends Controller
     {
         $invoices = DB::table('invoice')
         ->join('company', 'company.id', '=', 'invoice.companyId')
-        ->select('company.companyName', 'invoice.invTotal', 'invoice.id')
+        ->select('company.companyName', 'invoice.companyId', 'invoice.invTotal', 'invoice.id')
         ->where('invoice.id', "=", $invoice)
         ->first();
 
@@ -156,13 +156,10 @@ class CustomerController extends Controller
      */
     public function update(Request $request, Invoice $invoice)
     {
-        $request->validate([
-            'companyName' => 'required',
-            'companyAddress' => 'required',
-            'companyPhone' => 'required'
-        ]);
-    
-        $invoice->update($request->all());
+        $company = Company::find($request->companyId);
+        $company->companyDebt = $request->debtAfter;
+        $company->companyBalance = $request->balance;
+        $company->save(); //update company debt and balance
     
         return redirect()->action([CustomerController::class, 'index'])
                         ->with('success','Invoice updated successfully.');

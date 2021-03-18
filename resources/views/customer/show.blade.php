@@ -60,7 +60,7 @@
                         </td>
                         <td>
                             <h4><input type="text"
-                                    class="form-control {{ $errors->has('invTotal') ? 'is-invalid' :'' }}" id="invTotal"
+                                    class="form-control" id="invTotal"
                                     name="invTotal" readonly="readonly" value="{{ $invoices->invTotal }}"></input></h4>
                         </td>
                     </tr>
