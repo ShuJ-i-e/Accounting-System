@@ -47,6 +47,7 @@ class PaymentController extends Controller
      */
     public function create(Request $request)
     {
+        $companies = Company::all();
         return view('payment.create', compact('companies'));
     }
 
