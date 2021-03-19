@@ -60,12 +60,13 @@ class CustomerController extends Controller
 
         for($orderCount = 0; $orderCount <= $request->rowNum ; $orderCount++)
         {
-            if ( isset($request->product[$orderCount])) 
+            if ( isset($request->product[$orderCount])) //if the row is not deleted
             {
                 $order = new Order;
                 $order->invId = $invId;
                 $order->prodId = $request->product[$orderCount];
                 $order->weight = $request->weight[$orderCount];
+                $order->quantity = $request->quantity[$orderCount];
                 $order->Mweight = $request->Mweight[$orderCount];
                 $order->price = $request->price[$orderCount];
                 $order->total = $request->total[$orderCount];
@@ -95,7 +96,7 @@ class CustomerController extends Controller
         $orders = DB::table('order')
         ->join('invoice', 'invoice.id', '=', 'order.invId')
         ->join('product', 'product.id', '=', 'order.prodId')
-        ->select('product.prodName', 'order.weight', 'order.Mweight', 'order.price', 'order.total', 'order.remarks')
+        ->select('product.prodName', 'order.weight', 'order.Mweight', 'order.price', 'order.total', 'order.remarks', 'order.quantity')
         ->where('order.invId', "=", $invoice)
         ->get();
 
@@ -125,14 +126,14 @@ class CustomerController extends Controller
     {
         $invoices = DB::table('invoice')
         ->join('company', 'company.id', '=', 'invoice.companyId')
-        ->select('company.companyName', 'invoice.invTotal', 'invoice.id')
+        ->select('company.companyName', 'invoice.companyId', 'invoice.invTotal', 'invoice.id')
         ->where('invoice.id', "=", $invoice)
         ->first();
 
         $orders = DB::table('order')
         ->join('invoice', 'invoice.id', '=', 'order.invId')
         ->join('product', 'product.id', '=', 'order.prodId')
-        ->select('product.prodName', 'order.weight', 'order.Mweight', 'order.price', 'order.total', 'order.remarks')
+        ->select('product.prodName', 'order.weight', 'order.Mweight', 'order.price', 'order.total', 'order.remarks', 'order.id', 'order.quantity')
         ->where('order.invId', "=", $invoice)
         ->get();
 
@@ -154,15 +155,44 @@ class CustomerController extends Controller
      * @param  \App\Models\Invoice  $invoice
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Invoice $invoice)
+    public function update(Request $request, int $invoice)
     {
-        $request->validate([
-            'companyName' => 'required',
-            'companyAddress' => 'required',
-            'companyPhone' => 'required'
-        ]);
-    
-        $invoice->update($request->all());
+        $company = Company::find($request->compId);
+        $company->companyDebt = $company->companyDebt - $request->initialTotal + $request->invTotal;
+        $company->save(); //update company debt
+
+        $invoice = Invoice::find($invoice);
+        $invoice->invTotal = $request->invTotal;
+        $invoice->save();
+
+        for ($i = 0; $i <= $request->rowNum; $i++)  
+        {
+            if(isset($request->orderId[$i]))
+            {
+                $order = Order::find($request->orderId[$i]);
+                $order->prodId = $request->product[$i];
+                $order->weight = $request->weight[$i];
+                $order->quantity = $request->quantity[$i];
+                $order->Mweight = $request->Mweight[$i];
+                $order->price = $request->price[$i];
+                $order->total = $request->total[$i];
+                $order->remarks = $request->remarks[$i];
+                $order->save();
+            }
+            else
+            {
+                $order=new Order;
+                $order->prodId = $request->product[$i];
+                $order->weight = $request->weight[$i];
+                $order->quantity = $request->quantity[$i];
+                $order->Mweight = $request->Mweight[$i];
+                $order->price = $request->price[$i];
+                $order->total = $request->total[$i];
+                $order->remarks = $request->remarks[$i];
+                $order->invId = $invoice->id;
+                $order->save();
+            }
+        }
     
         return redirect()->action([CustomerController::class, 'index'])
                         ->with('success','Invoice updated successfully.');
