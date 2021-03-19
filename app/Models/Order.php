@@ -13,6 +13,7 @@ class Order extends Model
         'prodId',
         'invId',
         'weight',
+        'quantity',
         'price',
         'total'
     ];
