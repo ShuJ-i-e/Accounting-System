@@ -4,6 +4,7 @@
 <script>
 $(document).ready(function() {
     var count = 0;
+    document.getElementById("rowNum").value = count;
     $(".add-row").click(function() {
         count += 1;
         var row = '<tr>' +
@@ -16,6 +17,7 @@ $(document).ready(function() {
             '</select></td>' +
             '<td><input type="text" class="form-control" id="price[' + count + ']" name="price[' + count + ']" onkeyup="calcTotal(' + count + ')"/></td>' +
             '<td><input type="text" class="form-control" id="weight[' + count + ']" name="weight[' + count + ']" onkeyup="calcTotal(' + count + ')"/></td>' +
+            '<td><input type="text" class="form-control" id="quantity[' + count + ']" name="quantity[' + count + ']" onkeyup="calcTotal(' + count + ')"/></td>' +
             '<td><input type="text" class="form-control" id="Mweight[' + count + ']" name="Mweight[' + count + ']" onkeyup="calcTotal(' + count + ')"/></td>' +
             '<td><input type="text" class="form-control" id="remarks[' + count + ']" name="remarks[' + count + ']" value="-"/></td>' +
             '<td><input type="text" class="form-control form-total" id="total[' + count + ']" name="total[' + count + ']" readonly="readonly" value="0.00"/></td>' +
@@ -41,7 +43,8 @@ function calcTotal(index) {
     var weight = document.getElementById("weight[" + index + "]").value;
     var price = document.getElementById("price[" + index + "]").value;
     var Mweight = document.getElementById("Mweight[" + index + "]").value;
-    document.getElementById("total[" + index + "]").value = ((weight - Mweight) * price).toFixed(2);
+    var quantity = document.getElementById("quantity[" + index + "]").value;
+    document.getElementById("total[" + index + "]").value = (((weight * quantity) - Mweight) * price).toFixed(2);
     $('.form-total').each(function(){
         grantTotal += parseInt($(this).val());
     });
@@ -81,8 +84,9 @@ function calcTotal(index) {
                             <tr>
                                 <th>&nbsp</th>
                                 <th scope="col">Product Name</th>
-                                <th scope="col">Price(RM)</th>
-                                <th scope="col">Weight(kg)</th>
+                                <th scope="col">Price per KG (RM)</th>
+                                <th scope="col">Weight per box(kg)</th>
+                                <th scope="col">Quantity</th>
                                 <th scope="col">-KG</th>
                                 <th scope="col">Remarks</th>
                                 <th scope="col">Total(RM)</th>
@@ -109,6 +113,9 @@ function calcTotal(index) {
                                         class="form-control" id="weight[0]" name="weight[0]" onkeyup="calcTotal(0)" />
                                 </td>
                                 <td><input type="text"
+                                        class="form-control" id="quantity[0]" name="quantity[0]" onkeyup="calcTotal(0)" />
+                                </td>
+                                <td><input type="text"
                                         class="form-control" id="Mweight[0]" name="Mweight[0]" onkeyup="calcTotal(0)" />
                                 </td>
                                 <td><input type="text"
@@ -122,6 +129,7 @@ function calcTotal(index) {
                         </tbody>
                         <tfoot>
                             <tr>
+                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>

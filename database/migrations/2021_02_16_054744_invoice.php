@@ -19,6 +19,7 @@ class Invoice extends Migration
             $table->foreignId('companyId');
             $table->foreign('companyId')->references('id')->on('company')->onDelete('cascade')->onUpdate('cascade');
             $table->decimal('invTotal', 8, 2);
+            $table->integer('box');
             $table->text('payment');
         });
     }
