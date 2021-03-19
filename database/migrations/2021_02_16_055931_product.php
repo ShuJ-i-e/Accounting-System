@@ -17,6 +17,7 @@ class Product extends Migration
             $table->id();
             $table->timestamps();
             $table->text('prodName');
+            $table->text('hotkey');
         });
     }
 

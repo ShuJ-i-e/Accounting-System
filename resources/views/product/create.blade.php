@@ -19,6 +19,12 @@
                     @error('prodName')
                     <span class="error invalid-feedback">{{ $message }}</span>
                     @enderror
+                    <label>Product Hotkey</label>
+                    <input type="text" class="form-control {{ $errors->has('hotkey') ? 'is-invalid' :'' }}" name="hotkey"
+                        id="hotkey" value="" placeholder="">
+                    @error('hotkey')
+                    <span class="error invalid-feedback">{{ $message }}</span>
+                    @enderror
                 </div>
             </div>
             <!-- /.card-footer -->

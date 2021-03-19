@@ -26,7 +26,7 @@
         <tr>
             <th scope="col">Product ID</th>
             <th scope="col">Product Name</th>
-            <th scope="col">Remarks</th>
+            <th scope="col">Hotkey</th>
             <th scope="col">Actions</th>
         </tr>
     </thead>
@@ -35,7 +35,7 @@
     <tr>
         <td>{{ $product->id }}</td>
         <td>{{ $product->prodName }}</td>
-        <td>&nbsp</td>
+        <td>{{ $product->hotkey }}</td>
         <td>
             <form action="{{ route('product.destroy',$product->id) }}" method="POST">
                 @csrf

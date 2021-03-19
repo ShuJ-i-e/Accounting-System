@@ -2,19 +2,16 @@
 
 @section('js')
 <script>
-$(document).ready(function() {    
+$(document).ready(function() {
     $('#enableEditBtn').click(function() {
         $('#editBtn').show();
     });
 
     $('#editForm').submit(function(event) {
         event.preventDefault();
-        if($('#prodName').val().length === 0)
-        {
+        if ($('#prodName').val().length === 0) {
             $('#prodNameError').show();
-        }
-        else
-        {
+        } else {
             $(this).unbind('submit').submit()
         }
     });
@@ -30,8 +27,18 @@ $(document).ready(function() {
     <div class="card">
         <!-- /.card-header -->
         <div class="card-header">
-            <h3>Show Product</h3>
+            <div class="input-group">
+                <label>
+                <h3>Product Information</h3>
+                </label>
+                <div class="input-group-btn">
+                    <a class="btn btn-default" href="{{ route('product.edit',$resource->id) }}" @if (isset($edit)) style="display:none" @endif>
+                        <i id="enableEditBtn" class="fa fa-edit"></i>
+                    </a>
+                </div>
+            </div>
         </div>
+
         <!-- /.card-body -->
         <div class="card-body">
             <div class="form-group">
@@ -46,20 +53,26 @@ $(document).ready(function() {
                         value="{{ $resource->prodName }}" id="prodName" name="prodName" @if (!isset($edit)) disabled
                         @endif />
 
-                    <div class="input-group-btn">
-                        <a id="enableEditBtn" class="btn btn-default" href="{{ route('product.edit',$resource->id) }}" @if (isset($edit)) style="display:none" @endif>
-                            <i  class="fa fa-edit"></i>
-                        </a>
-                    </div>
                     <span class="error invalid-feedback" id="prodNameError">Product Name field is required</span>
+                </div>
+                <br>
+                <label>Hot Key</label>
+
+                <div class="input-group">
+                    <input type="text" class="form-control {{ $errors->has('hotkey') ? 'is-invalid' :'' }}"
+                        value="{{ $resource->hotkey }}" id="hotkey" name="hotkey" @if (!isset($edit)) disabled @endif />
+
+                    <span class="error invalid-feedback" id="prodNameError">Hot Key field is required</span>
                 </div>
             </div>
         </div>
+
         <!-- /.card-footer -->
         <div class="card-footer">
             <div>
                 <a class="btn btn-info" href="{{ route('product.index') }}"> Back</a>
-                <button class="btn btn-warning" id="editBtn" @if (!isset($edit)) style="display:none" @endif>Edit</button>
+                <button class="btn btn-warning" id="editBtn" @if (!isset($edit)) style="display:none"
+                    @endif>Edit</button>
             </div>
 
         </div>

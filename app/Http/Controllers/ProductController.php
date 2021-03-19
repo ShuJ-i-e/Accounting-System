@@ -48,6 +48,7 @@ class ProductController extends Controller
     {
         $request->validate([
             'prodName' => 'required',
+            'hotkey' => 'required',
         ]);
     
         Product::create($request->all());
