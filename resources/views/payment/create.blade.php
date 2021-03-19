@@ -110,7 +110,6 @@ $(document).ready(function() {
 
     //user is "finished typing," check and uncheck related checkbox
     function doneTyping () {
-
         //initialize components
         //hide error message
         $('#pError').hide();
@@ -127,13 +126,13 @@ $(document).ready(function() {
         //find the smallest invoice total among the list
         var payment = $("#payment").val(); //value from payment input
         var bal = parseInt(payment) + parseInt(balance); //initial bal value = value from payment input + initial balance
+        var smallest = invoice[0].invTotal;
         for (var i = 0; i < invoice_length - 1; i += 1)
         {
-            smallest=invoice[i].invTotal;
             next=invoice[i+1].invTotal;
             if(next < invoice[i].invTotal)
             {
-                smallest=invoice[i+1].invTotal;
+                smallest=next;
             }
         }
 
@@ -153,7 +152,6 @@ $(document).ready(function() {
                 }
             }
         }
-
         var i = 0;
         var loop = 1;
 
