@@ -21,6 +21,7 @@ class Order extends Migration
             $table->foreign('prodId')->references('id')->on('product')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('invId')->references('id')->on('invoice')->onDelete('cascade')->onUpdate('cascade');
             $table->decimal('weight', 8, 2);
+            $table->integer('quantity');
             $table->decimal('Mweight', 8, 2);
             $table->decimal('price', 8, 2);
             $table->decimal('total', 8, 2);

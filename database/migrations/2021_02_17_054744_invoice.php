@@ -17,10 +17,11 @@ class Invoice extends Migration
             $table->id();
             $table->timestamps();
             $table->foreignId('companyId');
+            $table->foreignId('paymentId')->nullable();
             $table->foreign('companyId')->references('id')->on('company')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('paymentId')->references('id')->on('payment')->onDelete('cascade')->onUpdate('cascade');
             $table->decimal('invTotal', 8, 2);
-            $table->integer('box');
-            $table->text('payment');
+            $table->text('payment')->default(0);
         });
     }
 
