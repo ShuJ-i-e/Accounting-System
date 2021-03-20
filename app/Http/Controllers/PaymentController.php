@@ -14,14 +14,28 @@ class PaymentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $payments = DB::table('payment')
-        ->join('company', 'company.id', '=', 'payment.companyId')
-        ->select('payment.id', 'company.companyName', 'payment.payment')
-        ->paginate(10);
+        if ($request->has('success')) 
+        {
+             if ($request->get('success') == true) {
+                 $message="Payment Created sucessfully!";
+                 $payments = DB::table('payment')
+                 ->join('company', 'company.id', '=', 'payment.companyId')
+                 ->select('payment.id', 'company.companyName', 'payment.payment')
+                 ->paginate(10);
+                return view('payment.list',compact('payments', 'message'))->with('i', (request()->input('page', 1) - 1) * 5);
+             }
+        }
+        else
+        {
+            $payments = DB::table('payment')
+            ->join('company', 'company.id', '=', 'payment.companyId')
+            ->select('payment.id', 'company.companyName', 'payment.payment')
+            ->paginate(10);
+           return view('payment.list',compact('payments'))->with('i', (request()->input('page', 1) - 1) * 5);
+        }
          
-        return view('payment.list',compact('payments'))->with('i', (request()->input('page', 1) - 1) * 5);
     }
 
     public function setCompanyId(Request $request)
@@ -75,9 +89,10 @@ class PaymentController extends Controller
         {
             $invoice = Invoice::find($request->inoviceIdList[$i]);
             $invoice->payment = true;
+            $invoice->paymentId = Payment::all()->last()->id;
             $invoice->save();
         }
-        return response()->json(['url'=>url('/payment')]); //return response to ajax request
+        return response()->json(['url'=>url('/payment?success=true')]); //return response to ajax request
     }
 
     /**

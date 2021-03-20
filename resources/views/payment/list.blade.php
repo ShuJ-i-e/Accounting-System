@@ -6,7 +6,7 @@
         <div class="pull-left">
             <h2>Customer Payment History</h2>
         </div>
-        @if ($message = Session::get('success'))
+        @if (isset($message))
         <div class="alert alert-success">
             <p>{{ $message }}</p>
         </div>
